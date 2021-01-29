@@ -8,6 +8,7 @@ contract TokenFarm {
 	string public name = "Dapp TokenFarm";
 	DappToken public dappToken;
 	DaiToken public daiToken;
+	address public owner;
 
 	address[] public stakers;
 	mapping(address => uint) public stakingBalance;
@@ -17,10 +18,15 @@ contract TokenFarm {
 	constructor(DappToken _dappToken, DaiToken _daiToken) public{
 		dappToken = _dappToken;
 		daiToken = _daiToken;
+		owner = msg.sender;
 	}
 
 	//1. Stakes Tokens (Deposits)
 	function stakeTokens(uint _amount) public {
+
+		// TO DO: Change require for modifiers
+		//Require amount greater than 0
+		require(_amount > 0, "amount cannot be 0");
 
 		//Aprove tokens to be transfered
 		//daiToken.aprove(address(this), _amount);
@@ -41,8 +47,41 @@ contract TokenFarm {
 
 	}
 
-	//2. Unstaking Tokens (Withdraw)
+	// Issuing Tokens
+	function issueTokens() public {
 
-	//3. Issuing Tokens
+		// TO DO: Change require for modifiers
+		require(msg.sender == owner, 'caller must be the owner');
+
+		//Issue tokens to all stakers
+		for(uint i=0; i<stakers.length; i++){
+			address recipient = stakers[i];
+			uint balance = stakingBalance[recipient];
+			if(balance > 0){
+				dappToken.transfer(recipient, balance);
+			}
+		} 
+	}
+
+
+	// Unstake Tokens (Withdraw)
+	function unstakeTokens() public {
+		//Fetch staking balance
+		uint balance = stakingBalance[msg.sender];
+
+		// TO DO: Change require for modifiers
+		//Require amount greater than 0
+		require(balance > 0, "staking balance cannot be 0");
+		
+		//Reset staking Balance
+		stakingBalance[msg.sender] = 0;
+
+		//Sending mDAI tokens
+		daiToken.transfer(msg.sender, balance);
+
+		// Update staking status
+		isStaking[msg.sender] = false;
+	}
+	
 	
 }
