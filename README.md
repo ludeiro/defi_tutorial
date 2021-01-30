@@ -1,3 +1,3 @@
 # Defi App
  
-![ScreenShot](src/DAppTokenFarm.png)
+![ScreenShot](/src/DAppTokenFarm.png)
