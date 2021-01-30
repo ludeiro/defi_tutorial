@@ -1,14 +1,14 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.6.0;
 
 import "./DappToken.sol";
 import "./DaiToken.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract TokenFarm {
+contract TokenFarm is Ownable{
 	
 	string public name = "Dapp TokenFarm";
 	DappToken public dappToken;
 	DaiToken public daiToken;
-	address public owner;
 
 	address[] public stakers;
 	mapping(address => uint) public stakingBalance;
@@ -18,18 +18,18 @@ contract TokenFarm {
 	constructor(DappToken _dappToken, DaiToken _daiToken) public{
 		dappToken = _dappToken;
 		daiToken = _daiToken;
-		owner = msg.sender;
 	}
 
-	//1. Stakes Tokens (Deposits)
+	modifier checkBalance(uint _balance) {
+		require(_balance > 0, "Staking balance must be greater than 0");
+		_;
+	}
+
+	// Stake Tokens (Deposits)
 	function stakeTokens(uint _amount) public {
 
-		// TO DO: Change require for modifiers
 		//Require amount greater than 0
 		require(_amount > 0, "amount cannot be 0");
-
-		//Aprove tokens to be transfered
-		//daiToken.aprove(address(this), _amount);
 
 		//Transfer DAI to this contract for staking
 		daiToken.transferFrom(msg.sender, address(this), _amount);
@@ -47,31 +47,10 @@ contract TokenFarm {
 
 	}
 
-	// Issuing Tokens
-	function issueTokens() public {
-
-		// TO DO: Change require for modifiers
-		require(msg.sender == owner, 'caller must be the owner');
-
-		//Issue tokens to all stakers
-		for(uint i=0; i<stakers.length; i++){
-			address recipient = stakers[i];
-			uint balance = stakingBalance[recipient];
-			if(balance > 0){
-				dappToken.transfer(recipient, balance);
-			}
-		} 
-	}
-
-
 	// Unstake Tokens (Withdraw)
-	function unstakeTokens() public {
+	function unstakeTokens() public checkBalance(stakingBalance[msg.sender]) {
 		//Fetch staking balance
 		uint balance = stakingBalance[msg.sender];
-
-		// TO DO: Change require for modifiers
-		//Require amount greater than 0
-		require(balance > 0, "staking balance cannot be 0");
 		
 		//Reset staking Balance
 		stakingBalance[msg.sender] = 0;
@@ -82,6 +61,19 @@ contract TokenFarm {
 		// Update staking status
 		isStaking[msg.sender] = false;
 	}
-	
+
+	// Issuing Tokens
+	function issueTokens() public onlyOwner{
+
+		//Issue tokens to all stakers with balance > 0 at the moment of execution
+		for(uint i=0; i<stakers.length; i++){
+			address recipient = stakers[i];
+			uint balance = stakingBalance[recipient];
+			if(balance > 0){
+				dappToken.transfer(recipient, balance);
+			}
+		} 
+	}
+
 	
 }

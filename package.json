@@ -1,9 +1,11 @@
 {
   "name": "defi-tutorial",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "DeFi Token Staking App",
   "author": "Alberto Rodriguez Ludeiro using a tutorial from dappuniversity.com",
   "dependencies": {
+    "@openzeppelin/cli": "^2.8.2",
+    "@openzeppelin/contracts": "^3.3.0",
     "babel-polyfill": "6.26.0",
     "babel-preset-env": "1.7.0",
     "babel-preset-es2015": "6.24.1",

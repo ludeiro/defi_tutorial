@@ -65,6 +65,10 @@
 
  			//Stake mDAI Tokens 
  			await daiToken.approve(tokenFarm.address, tokens('100'), {from: investor})
+
+ 			//Try to stake 0 tokens
+ 			await tokenFarm.stakeTokens(tokens('0'), { from: investor }).should.be.rejected
+
  			await tokenFarm.stakeTokens(tokens('100'), {from: investor})
 
  			//Check staking result
@@ -96,6 +100,9 @@
 
 			//Unstake the tokens
 			await tokenFarm.unstakeTokens({ from: investor })
+
+			//Unstake again the tokens (should be rejected)
+			await tokenFarm.unstakeTokens({ from: investor }).should.be.rejected
 			
 			result = await daiToken.balanceOf(investor)
 			assert.equal(result.toString(), tokens('100'), 'investor mDAI wallet balance correct after unstaking')
