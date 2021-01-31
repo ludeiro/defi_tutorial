@@ -21,6 +21,10 @@ Execute a .js script
 ```html
  truffle exec <path>
 ```
+Run tests
+```html
+ truffle test
+```
 start local web server (inside the defi_tutorial project)
 ```html
  npm run start
