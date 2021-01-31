@@ -9,6 +9,12 @@ Construction of a basic cryptocurrency staking dapp. In this app you will receiv
 ![DAppTokenFarm](https://user-images.githubusercontent.com/36158606/106355646-b2bc5d80-62f9-11eb-8fb8-25cd9e240fdd.PNG)
 
 # Useful commands:
+
+Install dependencies (First thing to do if you download this project): 
+```html
+ npm install
+```
+
 Compile the smart contracts: 
 ```html
  truffle compile
